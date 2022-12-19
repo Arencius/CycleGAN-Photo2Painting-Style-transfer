@@ -1,6 +1,4 @@
-import torch
 import torch.nn as nn
-from torchsummary import summary
 
 
 class ResidualBlock(nn.Module):
@@ -24,3 +22,39 @@ class ResidualBlock(nn.Module):
     def forward(self, x):
         act = nn.ReLU() if self.use_act else nn.Identity()
         return act(x + self.block(x))
+
+
+class ConvBlock(nn.Module):
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 kernel_size,
+                 stride=2,
+                 padding=1,
+                 downsample=True):
+        """
+        Convolutional block used in encoder and decoder part of the generator model.
+        :param in_channels: number of channels in the input image
+        :param out_channels: number of output channels
+        :param kernel_size: size of the kernel
+        :param stride: value of stride (in this case it's 2 for downsampling and upsampling the image)
+        :param padding: value of padding applied to the image
+        :param downsample: indicates whether the image gets down or upsampled
+        """
+        super().__init__()
+
+        self.conv_block = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels,
+                      kernel_size,
+                      stride=stride,
+                      padding=padding) if downsample
+            else nn.ConvTranspose2d(in_channels, out_channels,
+                                    kernel_size,
+                                    stride=stride,
+                                    padding=padding),
+            nn.InstanceNorm2d(out_channels),
+            nn.ReLU()
+        )
+
+    def forward(self, x):
+        return self.conv_block(x)

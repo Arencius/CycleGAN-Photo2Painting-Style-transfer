@@ -20,7 +20,6 @@ class TestResidualBlock(unittest.TestCase):
         res_block_output = self.residual_block(self.image)
 
         diff = res_block_output - conv_block_output
-
         torch.testing.assert_close(diff, self.image)
 
     def test_residual_block_with_activation(self):
@@ -28,4 +27,3 @@ class TestResidualBlock(unittest.TestCase):
 
         output = residual_block_with_act(self.image)
         self.assertTrue(torch.all(output >= 0))
-
