@@ -2,7 +2,9 @@ import torch.nn as nn
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self, channels: int = 256, use_act: bool = False):
+    def __init__(self,
+                 channels: int = 256,
+                 use_act: bool = False):
         """
         Convolutional block with skip connection.
         :param channels: number of channels in the conv layers within the block.
@@ -26,9 +28,9 @@ class ResidualBlock(nn.Module):
 
 class ConvBlock(nn.Module):
     def __init__(self,
-                 in_channels,
-                 out_channels,
-                 kernel_size,
+                 in_channels: int,
+                 out_channels: int,
+                 kernel_size: int,
                  stride=2,
                  padding=1,
                  downsample=True):

@@ -8,7 +8,7 @@ from src.model.blocks import ResidualBlock
 class TestResidualBlock(unittest.TestCase):
     def setUp(self) -> None:
         self.residual_block = ResidualBlock()
-        self.conv_layers = self.residual_block.block  # conv block used to check if skip connections work properly
+        self.conv_layers = self.residual_block.block
         self.image = torch.randn((256, 64, 64))
 
     def test_forward_output_shape(self):
