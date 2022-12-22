@@ -29,7 +29,7 @@ class Generator(nn.Module):
         )
 
         self.bottleneck = nn.Sequential(*[
-            ResidualBlock(self.filters * 4) for i in range(res_blocks)
+            ResidualBlock(self.filters * 4) for _ in range(res_blocks)
         ])
 
         self.decoder = nn.Sequential(
