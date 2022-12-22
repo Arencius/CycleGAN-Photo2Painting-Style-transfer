@@ -1,62 +1,64 @@
 import torch.nn as nn
 
 
-class ResidualBlock(nn.Module):
-    def __init__(self,
-                 channels: int = 256,
-                 use_act: bool = False):
-        """
-        Convolutional block with skip connection.
-        :param channels: number of channels in the conv layers within the block.
-        """
-        super().__init__()
-        self.use_act = use_act
-
-        self.block = nn.Sequential(
-            nn.Conv2d(in_channels=channels, out_channels=channels,
-                      kernel_size=3,
-                      padding=1),
-            nn.Conv2d(in_channels=channels, out_channels=channels,
-                      kernel_size=3,
-                      padding=1)
-        )
-
-    def forward(self, x):
-        act = nn.ReLU() if self.use_act else nn.Identity()
-        return act(x + self.block(x))
-
-
 class ConvBlock(nn.Module):
     def __init__(self,
                  in_channels: int,
                  out_channels: int,
                  kernel_size: int,
-                 stride=2,
-                 padding=1,
-                 downsample=True):
+                 upsample=False,
+                 use_act=True,
+                 leaky_relu=False,
+                 **kwargs):
         """
         Convolutional block used in encoder and decoder part of the generator model.
         :param in_channels: number of channels in the input image
         :param out_channels: number of output channels
         :param kernel_size: size of the kernel
-        :param stride: value of stride (in this case it's 2 for downsampling and upsampling the image)
-        :param padding: value of padding applied to the image
-        :param downsample: indicates whether the image gets down or upsampled
+        :param upsample: indicates whether the image gets upsampled
+        :param use_act:
+        :param leaky_relu:
         """
         super().__init__()
 
         self.conv_block = nn.Sequential(
             nn.Conv2d(in_channels, out_channels,
                       kernel_size,
-                      stride=stride,
-                      padding=padding) if downsample
+                      padding_mode='reflect',
+                      **kwargs) if not upsample
             else nn.ConvTranspose2d(in_channels, out_channels,
                                     kernel_size,
-                                    stride=stride,
-                                    padding=padding),
-            nn.InstanceNorm2d(out_channels),
-            nn.ReLU()
+                                    **kwargs),
+            nn.InstanceNorm2d(out_channels)
+        )
+
+        self.activation = nn.Identity() if not use_act \
+            else nn.LeakyReLU() if leaky_relu else nn.ReLU()
+
+    def forward(self, x):
+        return self.activation(self.conv_block(x))
+
+
+class ResidualBlock(nn.Module):
+    def __init__(self, channels: int = 256):
+        """
+        Convolutional block with skip connection.
+        :param channels: number of channels in the conv layers within the block.
+        """
+        super().__init__()
+
+        self.block = nn.Sequential(
+            ConvBlock(in_channels=channels, out_channels=channels,
+                      kernel_size=3,
+                      padding=1),
+            ConvBlock(in_channels=channels, out_channels=channels,
+                      kernel_size=3,
+                      padding=1,
+                      use_act=False)
         )
 
     def forward(self, x):
-        return self.conv_block(x)
+        return x + self.block(x)
+
+
+

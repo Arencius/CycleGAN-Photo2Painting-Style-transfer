@@ -12,40 +12,51 @@ class Generator(nn.Module):
         """
         super().__init__()
 
-        self.channels = 64
+        self.filters = 64
         self.encoder = nn.Sequential(
-            ConvBlock(3, self.channels,
+            ConvBlock(3, self.filters,
                       kernel_size=7,
-                      padding=3),
-            ConvBlock(self.channels, self.channels * 2,
-                      kernel_size=3),
-            ConvBlock(self.channels * 2, self.channels * 4,
+                      padding=3,
+                      stride=2),
+            ConvBlock(self.filters, self.filters * 2,
                       kernel_size=3,
-                      stride=1)
+                      stride=2,
+                      padding=1),
+            ConvBlock(self.filters * 2, self.filters * 4,
+                      kernel_size=3,
+                      stride=1,
+                      padding=1)
         )
 
         self.bottleneck = nn.Sequential(*[
-            ResidualBlock(self.channels * 4, use_act=i > res_blocks // 2) for i in range(res_blocks)
+            ResidualBlock(self.filters * 4) for i in range(res_blocks)
         ])
 
         self.decoder = nn.Sequential(
-            ConvBlock(self.channels * 4, self.channels * 4,
+            ConvBlock(self.filters * 4, self.filters * 4,
                       kernel_size=3,
                       stride=1,
-                      downsample=False),
-            ConvBlock(self.channels * 4, self.channels * 2,
+                      padding=1,
+                      upsample=True),
+            ConvBlock(self.filters * 4, self.filters * 2,
                       kernel_size=4,
-                      downsample=False),
-            ConvBlock(self.channels * 2, self.channels,
+                      stride=2,
+                      padding=1,
+                      upsample=True),
+            ConvBlock(self.filters * 2, self.filters,
                       kernel_size=4,
-                      downsample=False),
-            nn.Conv2d(self.channels, 3,
-                      kernel_size=3,
-                      padding=1)
+                      stride=2,
+                      padding=1,
+                      upsample=True)
         )
+        self.output = nn.Conv2d(self.filters, 3,
+                                kernel_size=7,
+                                padding=3,
+                                padding_mode='reflect')
 
     def forward(self, x):
         x = self.encoder(x)
         x = self.bottleneck(x)
+        x = self.decoder(x)
 
-        return torch.tanh(self.decoder(x))
+        return torch.tanh(self.output(x))

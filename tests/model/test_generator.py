@@ -17,7 +17,7 @@ class TestGenerator(unittest.TestCase):
         self.image = torch.randn((self.channels, self.width, self.height))
 
     def test_encoder_output_shape(self):
-        expected_channels = self.generator.channels * 4
+        expected_channels = self.generator.filters * 4
         expected_width = expected_height = self.width // 4
         expected_output_shape = (expected_channels, expected_width, expected_height)
 
