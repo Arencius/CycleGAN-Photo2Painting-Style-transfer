@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import torch
 from torch.utils.data import Dataset
 from torchvision.transforms.functional import pil_to_tensor
@@ -24,10 +25,8 @@ class Photo2MonetDataset(Dataset):
         path_to_photo = os.path.join(config.PHOTOS_DIR, photo_filename)
         path_to_monet = os.path.join(config.MONET_DIR, monet_filename)
 
-        photo_image = pil_to_tensor(Image.open(path_to_photo).convert('RGB')).type(torch.float)
-        monet_image = pil_to_tensor(Image.open(path_to_monet).convert('RGB')).type(torch.float)
-
-        print(type(photo_image))
+        photo_image = Image.open(path_to_photo).convert('RGB')
+        monet_image = Image.open(path_to_monet).convert('RGB')
 
         if self.transform:
             photo_image = config.IMG_TRANSFORMS(photo_image)
