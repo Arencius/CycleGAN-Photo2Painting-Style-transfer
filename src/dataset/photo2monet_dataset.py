@@ -27,8 +27,6 @@ class Photo2MonetDataset(Dataset):
         photo_image = pil_to_tensor(Image.open(path_to_photo).convert('RGB')).type(torch.float)
         monet_image = pil_to_tensor(Image.open(path_to_monet).convert('RGB')).type(torch.float)
 
-        print(type(photo_image))
-
         if self.transform:
             photo_image = config.IMG_TRANSFORMS(photo_image)
             monet_image = config.IMG_TRANSFORMS(monet_image)
