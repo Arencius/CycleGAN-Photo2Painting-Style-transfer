@@ -17,14 +17,14 @@ class Generator(nn.Module):
             ConvBlock(3, self.filters,
                       kernel_size=7,
                       padding=3,
-                      stride=2),
+                      stride=1),
             ConvBlock(self.filters, self.filters * 2,
                       kernel_size=3,
                       stride=2,
                       padding=1),
             ConvBlock(self.filters * 2, self.filters * 4,
                       kernel_size=3,
-                      stride=1,
+                      stride=2,
                       padding=1)
         )
 
