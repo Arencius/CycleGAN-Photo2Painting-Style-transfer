@@ -18,13 +18,18 @@ class Photo2MonetDataset(Dataset):
 
     def read_image_from_directory(self, category, index):
         categories = {
-            'photo': self.photos_data,
-            'monet': self.monet_data
+            'photo': (self.photos_data, config.PHOTOS_IMAGES_DIR),
+            'monet': (self.monet_data, config.MONET_IMAGES_DIR),
         }
 
-        image_filename = categories.get(category)[index]
-        path_to_image = os.path.join(config.PHOTOS_IMAGES_DIR, image_filename)
+        files_category, images_dir = categories.get(category)
+        image_filename = files_category[index]
+        path_to_image = os.path.join(images_dir, image_filename)
+
         image = Image.open(path_to_image).convert('RGB')
+
+        if self.transform:
+            image = config.IMG_TRANSFORMS(image)
 
         return image
 
@@ -32,23 +37,12 @@ class Photo2MonetDataset(Dataset):
         return min(len(self.photos_data), len(self.monet_data))
 
     def __getitem__(self, index):
-        '''
-                photo_image = self.read_image_from_directory('photo', index)
-                monet_image = self.read_image_from_directory('monet', index)
-                return photo_image, monet_image
-        '''
-        photo_filename = self.photos_data[index]
-        monet_filename = self.monet_data[index]
-
-        path_to_photo = os.path.join(config.PHOTOS_IMAGES_DIR, photo_filename)
-        path_to_monet = os.path.join(config.MONET_IMAGES_DIR, monet_filename)
-
-        photo_image = Image.open(path_to_photo).convert('RGB')
-        monet_image = Image.open(path_to_monet).convert('RGB')
-
-        if self.transform:
-            photo_image = config.IMG_TRANSFORMS(photo_image)
-            monet_image = config.IMG_TRANSFORMS(monet_image)
+        photo_image = self.read_image_from_directory('photo', index)
+        monet_image = self.read_image_from_directory('monet', index)
 
         return photo_image, monet_image
+
+
+
+
 

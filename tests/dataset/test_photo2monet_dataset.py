@@ -33,10 +33,3 @@ class TestPhoto2MonetDataset(unittest.TestCase):
                                           is_output_smaller_than_one])
 
         self.assertTrue(torch.all(is_output_in_range))
-
-    def test_read_image_from_directory_raises_error(self):
-        pass
-
-
-
-
