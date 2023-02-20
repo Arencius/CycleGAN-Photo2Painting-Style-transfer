@@ -2,6 +2,7 @@ import unittest
 
 import torch
 
+import config
 from src.model.generator import Generator
 
 
@@ -9,10 +10,10 @@ class TestGenerator(unittest.TestCase):
     def setUp(self) -> None:
         self.channels, self.width, self.height = (3, 256, 256)
 
-        self.generator = Generator()
-        self.encoder = self.generator.encoder
-        self.bottleneck = self.generator.bottleneck
-        self.decoder = self.generator.decoder
+        self.generator = Generator().to(config.DEVICE)
+        #self.encoder = self.generator.encoder
+        #self.bottleneck = self.generator.bottleneck
+        #self.decoder = self.generator.decoder
 
         self.image = torch.randn((self.channels, self.width, self.height))
 
@@ -35,6 +36,11 @@ class TestGenerator(unittest.TestCase):
         generator_output = self.generator(self.image)
 
         self.assertEqual(generator_output.shape, self.image.shape)
+
+    def test_generator_summary(self):
+        from torchsummary import summary
+
+        summary(self.generator, (3,256,256))
 
     def test_generator_output_range(self):
         generator_output = self.generator(self.image)

@@ -56,7 +56,7 @@ def train_model(monet_disc,
                 monet_disc_fake_loss = config.MSELoss(disc_monet_fake, torch.zeros_like(disc_monet_fake))
                 monet_discriminator_loss = monet_disc_real_loss + monet_disc_fake_loss
 
-                discriminator_loss = (photo_discriminator_loss + monet_discriminator_loss)  # 0.5
+                discriminator_loss = (photo_discriminator_loss + monet_discriminator_loss)
 
             # update discriminator optimizer
             discriminator_optimizer.zero_grad()
@@ -97,15 +97,16 @@ def train_model(monet_disc,
             scaler_g.step(generator_optimizer)
             scaler_g.update()
 
-            if index % 250 == 0:
-                torchvision.utils.save_image(monet * 0.5 + 0.5,
-                                             f"{config.PHOTOS_RESULTS_DIR}/monet_ground_truth_epoch_{epoch + 1}_{index}.png")
-                torchvision.utils.save_image(fake_photo * 0.5 + 0.5,
-                                             f"{config.PHOTOS_RESULTS_DIR}/fake_photo_epoch_{epoch + 1}_{index}.png")
-                torchvision.utils.save_image(photo * 0.5 + 0.5,
-                                             f"{config.MONET_RESULTS_DIR}/photo_ground_truth_epoch_{epoch + 1}_{index}.png")
-                torchvision.utils.save_image(fake_monet * 0.5 + 0.5,
-                                             f"{config.MONET_RESULTS_DIR}/fake_monet_epoch{epoch + 1}_{index}.png")
+            if index % 100 == 0:
+                real_monet_painting = monet * 0.5 + 0.5
+                generated_photo = fake_photo * 0.5 + 0.5
+                real_photo = photo * 0.5 + 0.5
+                generated_monet_painting = fake_monet * 0.5 + 0.5
+
+                torchvision.utils.save_image(torch.cat([real_monet_painting, generated_photo], dim=3),
+                                             f"{config.PHOTOS_RESULTS_DIR}/generated_photo_epoch{epoch + 1}_{index}.png")
+                torchvision.utils.save_image(torch.cat([real_photo, generated_monet_painting], dim=3),
+                                             f"{config.MONET_RESULTS_DIR}/generated_monet_epoch{epoch + 1}_{index}.png")
 
         print(f'Generator loss: {generator_loss}\n'
               f'Discriminator loss: {discriminator_loss}\n')

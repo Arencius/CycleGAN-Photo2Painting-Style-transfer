@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 import config
@@ -37,15 +38,21 @@ class ConvBlock(nn.Module):
         self.activation = nn.Identity() if not use_act \
             else nn.LeakyReLU(config.ALPHA) if leaky_relu else nn.ReLU()
 
-    def forward(self, x):
-        return self.activation(self.conv_block(x))
+    def forward(self, x, skip_connection_block=None):
+        block_output = self.conv_block(x)
+
+        if skip_connection_block is not None:
+            block_output += skip_connection_block
+
+        return self.activation(block_output)
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self, in_channels: int, out_channels = 256):
+    def __init__(self, in_channels: int, out_channels=256):
         """
         Convolutional block with skip connection.
-        :param channels: number of channels in the conv layers within the block.
+        :param in_channels: number of channels in the input image
+        :param out_channels: number of output channels
         """
         super().__init__()
 
@@ -61,6 +68,3 @@ class ResidualBlock(nn.Module):
 
     def forward(self, x):
         return x + self.block(x)
-
-
-
