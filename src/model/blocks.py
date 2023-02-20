@@ -12,6 +12,7 @@ class ConvBlock(nn.Module):
                  upsample=False,
                  use_act=True,
                  leaky_relu=False,
+                 reflection_padding = True,
                  **kwargs):
         """
         Convolutional block used in encoder and decoder part of the generator model.
@@ -27,7 +28,7 @@ class ConvBlock(nn.Module):
         self.conv_block = nn.Sequential(
             nn.Conv2d(in_channels, out_channels,
                       kernel_size,
-                      padding_mode='reflect',
+                      padding_mode='reflect' if reflection_padding else 'zeros',
                       **kwargs) if not upsample
             else nn.ConvTranspose2d(in_channels, out_channels,
                                     kernel_size,
@@ -59,7 +60,8 @@ class ResidualBlock(nn.Module):
         self.block = nn.Sequential(
             ConvBlock(in_channels=in_channels, out_channels=out_channels,
                       kernel_size=3,
-                      padding=1),
+                      padding=1,
+                      reflection_padding=False),
             ConvBlock(in_channels=out_channels, out_channels=out_channels,
                       kernel_size=3,
                       padding=1,

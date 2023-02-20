@@ -11,11 +11,15 @@ class TestGenerator(unittest.TestCase):
         self.channels, self.width, self.height = (3, 256, 256)
 
         self.generator = Generator().to(config.DEVICE)
-        #self.encoder = self.generator.encoder
-        #self.bottleneck = self.generator.bottleneck
-        #self.decoder = self.generator.decoder
+        self.encoder = torch.nn.Sequential(self.generator.encoder_block1,
+                                           self.generator.encoder_block2,
+                                           self.generator.encoder_block3)
+        self.bottleneck = self.generator.bottleneck
+        self.decoder = torch.nn.Sequential(self.generator.decoder_block1,
+                                           self.generator.decoder_block2,
+                                           self.generator.decoder_block3)
 
-        self.image = torch.randn((self.channels, self.width, self.height))
+        self.image = torch.randn((self.channels, self.width, self.height)).to(config.DEVICE)
 
     def test_encoder_output_shape(self):
         expected_channels = self.generator.filters * 4
@@ -40,7 +44,7 @@ class TestGenerator(unittest.TestCase):
     def test_generator_summary(self):
         from torchsummary import summary
 
-        summary(self.generator, (3,256,256))
+        summary(self.generator, (3, 256, 256))
 
     def test_generator_output_range(self):
         generator_output = self.generator(self.image)
