@@ -4,16 +4,16 @@ import torchvision
 from tqdm import tqdm
 
 
-def train_model(monet_disc,
+def train_model(monet_discriminator,
                 monet_gen,
-                photo_disc,
+                photo_discriminator,
                 photo_generator,
                 data_loader):
     scaler_g = torch.cuda.amp.GradScaler()
     scaler_d = torch.cuda.amp.GradScaler()
 
     discriminator_optimizer = torch.optim.Adam(
-        list(photo_disc.parameters()) + list(monet_disc.parameters()),
+        list(photo_discriminator.parameters()) + list(monet_discriminator.parameters()),
         lr=config.DISCRIMINATOR_LEARNING_RATE,
         betas=(config.BETA_1, config.BETA_2)
     )
@@ -40,20 +40,20 @@ def train_model(monet_disc,
             with torch.cuda.amp.autocast():
                 # photo discriminator
                 fake_photo = photo_generator(monet)
-                disc_photo_real = photo_disc(photo)
-                disc_photo_fake = photo_disc(fake_photo.detach())
+                disc_photo_real = photo_discriminator(photo)
+                photo_discriminator_output = photo_discriminator(fake_photo.detach())
 
                 photo_disc_real_loss = config.MSELoss(disc_photo_real, torch.ones_like(disc_photo_real))
-                photo_disc_fake_loss = config.MSELoss(disc_photo_fake, torch.zeros_like(disc_photo_fake))
+                photo_disc_fake_loss = config.MSELoss(photo_discriminator_output, torch.zeros_like(photo_discriminator_output))
                 photo_discriminator_loss = photo_disc_real_loss + photo_disc_fake_loss
 
                 # monet discriminator
                 fake_monet = monet_gen(photo)
-                disc_monet_real = monet_disc(monet)
-                disc_monet_fake = monet_disc(fake_monet.detach())
+                disc_monet_real = monet_discriminator(monet)
+                monet_discriminator_output = monet_discriminator(fake_monet.detach())
 
                 monet_disc_real_loss = config.MSELoss(disc_monet_real, torch.ones_like(disc_monet_real))
-                monet_disc_fake_loss = config.MSELoss(disc_monet_fake, torch.zeros_like(disc_monet_fake))
+                monet_disc_fake_loss = config.MSELoss(monet_discriminator_output, torch.zeros_like(monet_discriminator_output))
                 monet_discriminator_loss = monet_disc_real_loss + monet_disc_fake_loss
 
                 discriminator_loss = (photo_discriminator_loss + monet_discriminator_loss)
@@ -67,11 +67,11 @@ def train_model(monet_disc,
             # train generators
             with torch.cuda.amp.autocast():
                 # adversarial loss
-                disc_photo_fake = photo_disc(fake_photo)
-                disc_monet_fake = monet_disc(fake_monet)
+                photo_discriminator_output = photo_discriminator(fake_photo)
+                monet_discriminator_output = monet_discriminator(fake_monet)
 
-                adversarial_photo_loss = config.MSELoss(disc_photo_fake, torch.ones_like(disc_photo_fake))
-                adversarial_monet_loss = config.MSELoss(disc_monet_fake, torch.ones_like(disc_monet_fake))
+                adversarial_photo_loss = config.MSELoss(photo_discriminator_output, torch.ones_like(photo_discriminator_output))
+                adversarial_monet_loss = config.MSELoss(monet_discriminator_output, torch.ones_like(monet_discriminator_output))
 
                 # cycle loss
                 cycle_photo_loss = config.L1Loss(photo, photo_generator(fake_monet))

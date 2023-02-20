@@ -21,6 +21,7 @@ PHOTOS_IMAGES_DIR = os.path.join(ROOT_DIR, 'src/dataset/photo_jpg/')
 MONET_IMAGES_DIR = os.path.join(ROOT_DIR, 'src/dataset/monet_jpg/')
 PHOTOS_RESULTS_DIR = os.path.join(ROOT_DIR, 'training_results/Generated photos/')
 MONET_RESULTS_DIR = os.path.join(ROOT_DIR, 'training_results/Generated paintings/')
+
 IMG_TRANSFORMS = transforms.Compose([
                 transforms.Resize((IMAGE_HEIGHT, IMAGE_WIDTH)),
                 transforms.ToTensor(),
