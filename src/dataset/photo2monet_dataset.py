@@ -17,12 +17,12 @@ class Photo2MonetDataset(Dataset):
         self.monet_data = os.listdir(config.MONET_IMAGES_DIR)
 
     def read_image_from_directory(self, category, index):
-        categories = {
+        images_categories = {
             'photo': (self.photos_data, config.PHOTOS_IMAGES_DIR),
             'monet': (self.monet_data, config.MONET_IMAGES_DIR),
         }
 
-        files_category, images_dir = categories.get(category)
+        files_category, images_dir = images_categories.get(category)
         image_filename = files_category[index]
         path_to_image = os.path.join(images_dir, image_filename)
 
