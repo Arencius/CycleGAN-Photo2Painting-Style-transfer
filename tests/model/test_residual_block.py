@@ -7,7 +7,7 @@ from src.model.blocks import ResidualBlock
 
 class TestResidualBlock(unittest.TestCase):
     def setUp(self) -> None:
-        self.residual_block = ResidualBlock()
+        self.residual_block = ResidualBlock(256)
         self.conv_layers = self.residual_block.block
         self.image = torch.randn((256, 64, 64))
 

@@ -25,11 +25,11 @@ class Generator(nn.Module):
             ConvBlock(self.filters * 2, self.filters * 4,
                       kernel_size=3,
                       stride=2,
-                      padding=1)
+                      padding=1),
         )
 
         self.bottleneck = nn.Sequential(*[
-            ResidualBlock(self.filters * 4) for _ in range(res_blocks)
+            ResidualBlock(in_channels=self.filters * 4) for _ in range(res_blocks)
         ])
 
         self.decoder = nn.Sequential(

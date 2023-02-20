@@ -36,7 +36,6 @@ class Discriminator(nn.Module):
                       padding=1,
                       leaky_relu=True)
         )
-
         self.output = nn.Conv2d(self.filters * 8, 1,
                                 kernel_size=4,
                                 stride=1,

@@ -42,7 +42,7 @@ class ConvBlock(nn.Module):
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self, channels: int = 256):
+    def __init__(self, in_channels: int, out_channels = 256):
         """
         Convolutional block with skip connection.
         :param channels: number of channels in the conv layers within the block.
@@ -50,10 +50,10 @@ class ResidualBlock(nn.Module):
         super().__init__()
 
         self.block = nn.Sequential(
-            ConvBlock(in_channels=channels, out_channels=channels,
+            ConvBlock(in_channels=in_channels, out_channels=out_channels,
                       kernel_size=3,
                       padding=1),
-            ConvBlock(in_channels=channels, out_channels=channels,
+            ConvBlock(in_channels=out_channels, out_channels=out_channels,
                       kernel_size=3,
                       padding=1,
                       use_act=False)
