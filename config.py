@@ -22,6 +22,7 @@ MONET_IMAGES_DIR = os.path.join(ROOT_DIR, 'src/dataset/monet_jpg/')
 PHOTOS_RESULTS_DIR = os.path.join(ROOT_DIR, 'training_results/Generated photos/')
 MONET_RESULTS_DIR = os.path.join(ROOT_DIR, 'training_results/Generated paintings/')
 IMG_TRANSFORMS = transforms.Compose([
+                transforms.Resize((IMAGE_HEIGHT, IMAGE_WIDTH)),
                 transforms.ToTensor(),
                 transforms.RandomHorizontalFlip(p=0.5),
                 transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
