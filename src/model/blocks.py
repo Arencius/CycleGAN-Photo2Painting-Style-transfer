@@ -12,7 +12,7 @@ class ConvBlock(nn.Module):
                  upsample=False,
                  use_act=True,
                  leaky_relu=False,
-                 reflection_padding = True,
+                 reflection_padding=True,
                  **kwargs):
         """
         Convolutional block used in encoder and decoder part of the generator model.
@@ -22,6 +22,7 @@ class ConvBlock(nn.Module):
         :param upsample: indicates whether the image gets upsampled
         :param use_act: whether to use activation function in the block
         :param leaky_relu: activation function used in the block - if True, LeakyReLU is used, otherwise ReLU
+        :param reflection_padding: whether to use reflection or zeros padding in the convolution
         """
         super().__init__()
 
@@ -39,13 +40,13 @@ class ConvBlock(nn.Module):
         self.activation = nn.Identity() if not use_act \
             else nn.LeakyReLU(config.ALPHA) if leaky_relu else nn.ReLU()
 
-    def forward(self, x, skip_connection_block=None):
-        block_output = self.conv_block(x)
+    def forward(self, x, skip_block_output: torch.Tensor = None):
+        conv_block_output = self.conv_block(x)
 
-        if skip_connection_block is not None:
-            block_output += skip_connection_block
+        if skip_block_output is not None:
+            conv_block_output += skip_block_output
 
-        return self.activation(block_output)
+        return self.activation(conv_block_output)
 
 
 class ResidualBlock(nn.Module):

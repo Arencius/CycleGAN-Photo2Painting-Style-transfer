@@ -1,4 +1,5 @@
 import config
+import utils
 import torch
 import torchvision
 from tqdm import tqdm
@@ -27,6 +28,7 @@ def train_model(monet_discriminator,
 
     for epoch in range(config.EPOCHS):
         print(f'Epoch: {epoch + 1}')
+        generator_losses, discriminator_losses = [], []
 
         if epoch > 2:
             discriminator_optimizer.param_groups[0]['lr'] *= 0.5
@@ -97,7 +99,10 @@ def train_model(monet_discriminator,
             scaler_g.step(generator_optimizer)
             scaler_g.update()
 
-            if index % 100 == 0:
+            generator_losses.append(generator_loss)
+            discriminator_losses.append(discriminator_loss)
+
+            if index % config.VALIDATION_STEP == 0:
                 real_monet_painting = monet * 0.5 + 0.5
                 generated_photo = fake_photo * 0.5 + 0.5
                 real_photo = photo * 0.5 + 0.5
@@ -110,3 +115,5 @@ def train_model(monet_discriminator,
 
         print(f'Generator loss: {generator_loss}\n'
               f'Discriminator loss: {discriminator_loss}\n')
+
+        utils.save_epoch_loss_results(epoch, [generator_losses, discriminator_losses])

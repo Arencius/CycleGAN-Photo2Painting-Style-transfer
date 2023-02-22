@@ -11,7 +11,7 @@ if __name__ == '__main__':
     monet_discriminator = Discriminator().to(config.DEVICE)
     monet_generator = Generator(res_blocks=6).to(config.DEVICE)
 
-    summary(monet_generator, (3,256,256))
+    # summary(monet_generator, (3,256,256))
 
     photo_discriminator = Discriminator().to(config.DEVICE)
     photo_generator = Generator(res_blocks=6).to(config.DEVICE)

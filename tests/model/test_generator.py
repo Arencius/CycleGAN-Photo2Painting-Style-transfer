@@ -41,7 +41,7 @@ class TestGenerator(unittest.TestCase):
 
         self.assertEqual(generator_output.shape, self.image.shape)
 
-    def test_generator_summary(self):
+    def test_if_generator_compiles(self):
         from torchsummary import summary
 
         summary(self.generator, (3, 256, 256))
