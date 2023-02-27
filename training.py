@@ -30,11 +30,11 @@ def train_model(monet_discriminator,
         print(f'Epoch: {epoch + 1}')
         generator_losses, discriminator_losses = [], []
 
-        if epoch > 2:
+        if 0 < epoch < 10:
             discriminator_optimizer.param_groups[0]['lr'] *= 0.5
             generator_optimizer.param_groups[0]['lr'] *= 0.5
 
-        for index, (photo, monet) in enumerate(tqdm(data_loader)):
+        for batch_index, (photo, monet) in enumerate(tqdm(data_loader)):
             photo = photo.to(config.DEVICE)
             monet = monet.to(config.DEVICE)
 
@@ -72,8 +72,11 @@ def train_model(monet_discriminator,
                 photo_discriminator_output = photo_discriminator(fake_photo)
                 monet_discriminator_output = monet_discriminator(fake_monet)
 
-                adversarial_photo_loss = config.MSELoss(photo_discriminator_output, torch.ones_like(photo_discriminator_output))
-                adversarial_monet_loss = config.MSELoss(monet_discriminator_output, torch.ones_like(monet_discriminator_output))
+                fake_photo_logits = torch.ones_like(photo_discriminator_output) * 0.9
+                fake_monet_logits = torch.ones_like(monet_discriminator_output) * 0.9
+
+                adversarial_photo_loss = config.MSELoss(photo_discriminator_output, fake_photo_logits)
+                adversarial_monet_loss = config.MSELoss(monet_discriminator_output, fake_monet_logits)
 
                 # cycle loss
                 cycle_photo_loss = config.L1Loss(photo, photo_generator(fake_monet))
@@ -84,7 +87,7 @@ def train_model(monet_discriminator,
                 identity_monet_loss = config.L1Loss(monet, monet_gen(monet))
 
                 # combined loss
-                generator_loss = 0.5 * (
+                generator_loss = 0.75 * (
                         adversarial_photo_loss
                         + adversarial_monet_loss
                         + cycle_photo_loss * config.LAMBDA_CYCLE
@@ -99,21 +102,20 @@ def train_model(monet_discriminator,
             scaler_g.step(generator_optimizer)
             scaler_g.update()
 
-            generator_losses.append(generator_loss)
-            discriminator_losses.append(discriminator_loss)
+            generator_losses.append(generator_loss.item())
+            discriminator_losses.append(discriminator_loss.item())
 
-            if index % config.VALIDATION_STEP == 0:
-                real_monet_painting = monet * 0.5 + 0.5
-                generated_photo = fake_photo * 0.5 + 0.5
-                real_photo = photo * 0.5 + 0.5
-                generated_monet_painting = fake_monet * 0.5 + 0.5
+            if batch_index % config.VALIDATION_STEP == 0:
+                real_monet_painting, generated_photo, \
+                    real_photo, generated_monet_painting = utils.denormalize(monet, fake_photo, photo, fake_monet)
 
                 torchvision.utils.save_image(torch.cat([real_monet_painting, generated_photo], dim=3),
-                                             f"{config.PHOTOS_RESULTS_DIR}/generated_photo_epoch{epoch + 1}_{index}.png")
+                                             f"{config.PHOTOS_RESULTS_DIR}/generated_photo_epoch{epoch + 1}_{batch_index}.png")
                 torchvision.utils.save_image(torch.cat([real_photo, generated_monet_painting], dim=3),
-                                             f"{config.MONET_RESULTS_DIR}/generated_monet_epoch{epoch + 1}_{index}.png")
+                                             f"{config.MONET_RESULTS_DIR}/generated_monet_epoch{epoch + 1}_{batch_index}.png")
 
-        print(f'Generator loss: {generator_loss}\n'
-              f'Discriminator loss: {discriminator_loss}\n')
+        print(f'Mean generator loss: {torch.tensor(generator_loss, dtype=torch.float32).mean()}\n'
+              f'Mean discriminator loss: {torch.tensor(discriminator_loss, dtype=torch.float32).mean()}\n')
 
-        utils.save_epoch_loss_results(epoch, [generator_losses, discriminator_losses])
+        utils.save_epoch_loss_results(epoch, [generator_losses,
+                                              discriminator_losses])
