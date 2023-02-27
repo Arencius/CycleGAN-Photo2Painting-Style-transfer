@@ -14,8 +14,7 @@ class Discriminator(nn.Module):
             nn.Conv2d(in_channels=3, out_channels=self.filters,
                       kernel_size=4,
                       stride=2,
-                      padding=1,
-                      padding_mode='reflect'),
+                      padding=1),
             nn.LeakyReLU(config.ALPHA)
         )
 
@@ -27,7 +26,7 @@ class Discriminator(nn.Module):
                       leaky_relu=True),
             ConvBlock(self.filters * 2, self.filters * 4,
                       kernel_size=4,
-                      stride=2,
+                      stride=1,
                       padding=1,
                       leaky_relu=True),
             ConvBlock(self.filters * 4, self.filters * 8,
@@ -39,8 +38,9 @@ class Discriminator(nn.Module):
         self.output = nn.Conv2d(self.filters * 8, 1,
                                 kernel_size=4,
                                 stride=1,
-                                padding=1,
-                                padding_mode="reflect")
+                                padding=3,
+                                padding_mode="reflect"
+                                )
 
     def forward(self, x):
         x = self.initial_block(x)
