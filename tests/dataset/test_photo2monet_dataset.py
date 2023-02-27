@@ -3,6 +3,7 @@ import unittest
 import random
 import torch
 import config
+import utils
 
 from src.dataset.photo2monet_dataset import Photo2MonetDataset
 
@@ -25,11 +26,4 @@ class TestPhoto2MonetDataset(unittest.TestCase):
         self.assertEqual(self.photo.shape, expected_shape)
 
     def test_dataset_images_value_range(self):
-        expected_min, expected_max = -1.0, 1.0
-
-        is_output_greater_than_negative_one = torch.all(self.photo >= expected_min)
-        is_output_smaller_than_one = torch.all(self.photo <= expected_max)
-        is_output_in_range = torch.stack([is_output_greater_than_negative_one,
-                                          is_output_smaller_than_one])
-
-        self.assertTrue(torch.all(is_output_in_range))
+        self.assertTrue(utils.is_tensor_in_range(self.photo))

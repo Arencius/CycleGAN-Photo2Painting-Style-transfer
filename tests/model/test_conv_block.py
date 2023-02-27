@@ -13,6 +13,7 @@ class TestConvBlock(unittest.TestCase):
                                               kernel_size=3,
                                               stride=2,
                                               padding=1)
+
         self.conv_block_down_leaky_relu = ConvBlock(self.channels, self.channels,
                                                     kernel_size=3,
                                                     stride=2,
@@ -20,10 +21,9 @@ class TestConvBlock(unittest.TestCase):
                                                     leaky_relu=True)
 
         self.conv_block_up = ConvBlock(self.channels, self.channels,
-                                       kernel_size=3,
+                                       kernel_size=4,
                                        stride=2,
                                        padding=1,
-                                       output_padding=1,
                                        upsample=True)
         self.image = torch.randn((self.channels, self.width, self.height))
 
