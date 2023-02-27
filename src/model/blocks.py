@@ -66,7 +66,8 @@ class ResidualBlock(nn.Module):
             ConvBlock(in_channels=out_channels, out_channels=out_channels,
                       kernel_size=3,
                       padding=1,
-                      use_act=False)
+                      use_act=False,
+                      reflection_padding=False)
         )
 
     def forward(self, x):
