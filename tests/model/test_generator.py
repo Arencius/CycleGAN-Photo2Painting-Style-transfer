@@ -3,6 +3,7 @@ import unittest
 import torch
 
 import config
+import utils
 from src.model.generator import Generator
 
 
@@ -41,17 +42,6 @@ class TestGenerator(unittest.TestCase):
 
         self.assertEqual(generator_output.shape, self.image.shape)
 
-    def test_if_generator_compiles(self):
-        from torchsummary import summary
-
-        summary(self.generator, (3, 256, 256))
-
     def test_generator_output_range(self):
         generator_output = self.generator(self.image)
-
-        is_output_greater_than_negative_one = torch.all(generator_output >= -1.0)
-        is_output_smaller_than_one = torch.all(generator_output <= 1)
-        is_output_in_range = torch.stack([is_output_greater_than_negative_one,
-                                          is_output_smaller_than_one])
-
-        self.assertTrue(torch.all(is_output_in_range))
+        self.assertTrue(utils.is_tensor_in_range(generator_output))
