@@ -3,12 +3,13 @@ import torch
 from torchvision.transforms import transforms
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+DISCRIMINATOR_PATCH_SIZE = 65
 IMAGE_CHANNELS = 3
 IMAGE_WIDTH = 256
 IMAGE_HEIGHT = 256
 LAMBDA_CYCLE = 10
-LAMBDA_IDENTITY = 0.5
-BATCH_SIZE = 1
+LAMBDA_IDENTITY = LAMBDA_CYCLE * 0.5
+BATCH_SIZE = 2
 ALPHA = 0.2
 BETA_1 = 0.5
 BETA_2 = 0.999
@@ -25,7 +26,7 @@ LOSS_PLOTS_DIR = os.path.join(ROOT_DIR, 'training_results/Models loss/')
 
 IMG_TRANSFORMS = transforms.Compose([
     transforms.Resize((IMAGE_HEIGHT * 2, IMAGE_WIDTH * 2)),
-    transforms.RandomCrop((IMAGE_HEIGHT, IMAGE_WIDTH)),
+    transforms.CenterCrop(IMAGE_WIDTH),
     transforms.ToTensor(),
     transforms.RandomHorizontalFlip(p=0.5),
     transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
