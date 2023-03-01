@@ -19,9 +19,9 @@ EPOCHS = 15
 VALIDATION_STEP = 100
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 PHOTOS_IMAGES_DIR = os.path.join(ROOT_DIR, 'src/dataset/photo_jpg/')
-MONET_IMAGES_DIR = os.path.join(ROOT_DIR, 'src/dataset/monet_jpg/')
+PAINTINGS_IMAGES_DIR = os.path.join(ROOT_DIR, 'src/dataset/monet_jpg/')
 PHOTOS_RESULTS_DIR = os.path.join(ROOT_DIR, 'training_results/Generated photos/')
-MONET_RESULTS_DIR = os.path.join(ROOT_DIR, 'training_results/Generated paintings/')
+PAINTINGS_RESULTS_DIR = os.path.join(ROOT_DIR, 'training_results/Generated paintings/')
 LOSS_PLOTS_DIR = os.path.join(ROOT_DIR, 'training_results/Models loss/')
 
 IMG_TRANSFORMS = transforms.Compose([
