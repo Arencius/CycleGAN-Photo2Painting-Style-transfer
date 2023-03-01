@@ -41,6 +41,16 @@ class ConvBlock(nn.Module):
             else nn.LeakyReLU(config.ALPHA) if leaky_relu else nn.ReLU()
 
     def forward(self, x, skip_block_output: torch.Tensor = None):
+        """
+        Forward pass of the block. Applies a convolutional block to the input tensor and adds a
+        skip connection with the output of the corresponding encoder block (if provided), before applying
+        an activation function.
+
+        :param x: input tensor to be processed by the decoder block.
+        :param skip_block_output: optional tensor representing the output of the corresponding encoder block.
+        :return: output tensor of the decoder block after applying the convolutional block, skip connection, and
+                 activation function.
+        """
         conv_block_output = self.conv_block(x)
 
         if skip_block_output is not None:
