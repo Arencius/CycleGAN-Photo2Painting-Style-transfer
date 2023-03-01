@@ -3,7 +3,7 @@ import torch
 from torchvision.transforms import transforms
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-DISCRIMINATOR_PATCH_SIZE = 65
+DISCRIMINATOR_PATCH_SIZE = 30
 IMAGE_CHANNELS = 3
 IMAGE_WIDTH = 256
 IMAGE_HEIGHT = 256

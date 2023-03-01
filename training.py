@@ -46,7 +46,8 @@ def train_model(monet_discriminator,
                 photo_discriminator_output = photo_discriminator(fake_photo.detach())
 
                 photo_disc_real_loss = config.MSELoss(disc_photo_real, torch.ones_like(disc_photo_real))
-                photo_disc_fake_loss = config.MSELoss(photo_discriminator_output, torch.zeros_like(photo_discriminator_output))
+                photo_disc_fake_loss = config.MSELoss(photo_discriminator_output,
+                                                      torch.zeros_like(photo_discriminator_output))
                 photo_discriminator_loss = photo_disc_real_loss + photo_disc_fake_loss
 
                 # monet discriminator
@@ -55,7 +56,8 @@ def train_model(monet_discriminator,
                 monet_discriminator_output = monet_discriminator(fake_monet.detach())
 
                 monet_disc_real_loss = config.MSELoss(disc_monet_real, torch.ones_like(disc_monet_real))
-                monet_disc_fake_loss = config.MSELoss(monet_discriminator_output, torch.zeros_like(monet_discriminator_output))
+                monet_disc_fake_loss = config.MSELoss(monet_discriminator_output,
+                                                      torch.zeros_like(monet_discriminator_output))
                 monet_discriminator_loss = monet_disc_real_loss + monet_disc_fake_loss
 
                 discriminator_loss = (photo_discriminator_loss + monet_discriminator_loss)
@@ -114,8 +116,8 @@ def train_model(monet_discriminator,
                 torchvision.utils.save_image(torch.cat([real_photo, generated_monet_painting], dim=3),
                                              f"{config.MONET_RESULTS_DIR}/generated_monet_epoch{epoch + 1}_{batch_index}.png")
 
-        print(f'Mean generator loss: {torch.tensor(generator_loss, dtype=torch.float32).mean()}\n'
-              f'Mean discriminator loss: {torch.tensor(discriminator_loss, dtype=torch.float32).mean()}\n')
+        print(f'Mean generator loss: {torch.tensor(generator_losses, dtype=torch.float32).mean()}\n'
+              f'Mean discriminator loss: {torch.tensor(discriminator_losses, dtype=torch.float32).mean()}\n')
 
         utils.save_epoch_loss_results(epoch, [generator_losses,
                                               discriminator_losses])
