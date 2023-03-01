@@ -13,7 +13,7 @@ Training results - generated every 100 batches photo and painting and plots for 
 ![Generated paintings](./training_results/Generated%20paintings/generated_monet_epoch2_800.png)
 
 #### Generated photos (base painting on the left)
-![Generated photos](./training_results/Generated photos/generated_photo_epoch2_800.png)
+![Generated photos](./training_results/Generated%20photos/generated_photo_epoch2_800.png)
 
 #### Models losses plot
 ![Models loss plot](./training_results/Models%20loss/1.png)
