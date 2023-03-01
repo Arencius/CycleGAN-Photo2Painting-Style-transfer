@@ -7,7 +7,7 @@ from src.model.blocks import ConvBlock, ResidualBlock
 class Generator(nn.Module):
     def __init__(self, res_blocks=6):
         """
-        CycleGAN generator model.
+        CycleGAN generator model. Implements the U-Net like autoencoder architecture with residual blocks in the bottleneck.
         :param res_blocks: number of residual blocks in the generator.
         """
         super().__init__()

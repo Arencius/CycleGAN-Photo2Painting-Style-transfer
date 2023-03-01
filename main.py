@@ -4,14 +4,11 @@ from src.dataset.photo2painting_dataset import Photo2PaintingDataset
 from src.model.generator import Generator
 from src.model.discriminator import Discriminator
 from training import train_model
-from torchsummary import summary
 
 
 if __name__ == '__main__':
     painting_discriminator = Discriminator().to(config.DEVICE)
     painting_generator = Generator(res_blocks=6).to(config.DEVICE)
-
-    # summary(painting_generator, (3,256,256))
 
     photo_discriminator = Discriminator().to(config.DEVICE)
     photo_generator = Generator(res_blocks=6).to(config.DEVICE)
