@@ -20,13 +20,11 @@ def save_epoch_loss_results(epoch: int, losses: List[np.array]):
     generator_losses, discriminator_losses = losses
     steps = [i for i, _ in enumerate(generator_losses)]
 
-    # plot loss for each model
     plt.plot(steps, generator_losses, label='Generator loss')
     plt.plot(steps, discriminator_losses, label='Discriminator loss')
 
     plt.grid(True)
 
-    # set plot labels and title
     plt.xlabel('Step')
     plt.ylabel('Loss')
     plt.legend()
